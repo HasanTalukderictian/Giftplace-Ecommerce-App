@@ -13,6 +13,16 @@
     <link rel="stylesheet" href="/vendors/feather/feather.css">
     <link rel="stylesheet" href="/vendors/ti-icons/css/themify-icons.css">
     <link rel="stylesheet" href="/vendors/css/vendor.bundle.base.css">
+
+    <!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Popper.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+
+<!-- Bootstrap 4 JavaScript -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
     <!-- endinject -->
     <!-- Plugin css for this page -->
     <link rel="stylesheet" href="/vendors/datatables.net-bs4/dataTables.bootstrap4.css">
@@ -321,10 +331,10 @@
     <div class="collapse" id="products">
         <ul class="nav flex-column sub-menu">
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('product.brands') }}">Brands</a>
+                <a class="nav-link" href="#">Brands</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link " href="{{  route('product.categories') }}">Categories</a>
+                <a class="nav-link " href="#">Categories</a>
             </li>
 
             <li class="nav-item">
@@ -413,34 +423,98 @@
       <div class="container border-2">
 
         <div class="d-flex justify-content-between align-items-center">
-    <h2 class="me-3">Products</h2>
-    <button class="btn btn-primary">+Add Product</button>
+   <div class="main-panel">
+    <div class="content-wrapper">
+        <div class="content-wrapper">
+            <div class="row">
+
+                <!-- Admin Information -->
+                <div class="container">
+
+                    <!-- Button and Header -->
+                    <div class="d-flex justify-content-between align-items-center">
+                    <h2 class="me-3">Brands</h2>
+                     <button class="btn btn-primary" data-toggle="modal" data-target="#addBrandModal">+ Add Brands</button>
+                     </div>
+
+                    <!-- Brands Table -->
+                    <table class="table table-striped table-bordered" style="background-color: white;">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Image</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+        @foreach($brandsinfo as $brand)
+            <tr>
+                <td>{{ $brand->id }}</td>
+                <td>{{ $brand->name }}</td>
+                <td><img src="{{ asset('storage/' . $brand->image) }}" alt="{{ $brand->name }}" width="100"></td>
+                 <td>
+                <!-- Delete Button Form -->
+                <form action="{{ route('brands.destroy', $brand->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this brand?');">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </td>
+            </tr>
+        @endforeach
+    </tbody>
+                    </table>
+                </div>
+
+                <!-- Modal for adding brands -->
+               <!-- Modal -->
+<div class="modal fade" id="addBrandModal" tabindex="-1" role="dialog" aria-labelledby="addBrandModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addBrandModalLabel">Add Brand</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Display Success Message -->
+                @if(session('success'))
+                    <div class="alert alert-success">
+                        {{ session('success') }}
+                    </div>
+                @endif
+
+                <!-- Form -->
+                <form action="{{ route('brands.store') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="form-group">
+                        <label for="brandName">Brand Name</label>
+                        <input type="text" class="form-control" id="brandName" name="name" placeholder="Enter brand name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="brandImage">Brand Image</label>
+                        <input type="file" class="form-control-file" id="brandImage" name="image" required>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+    </div>
+  </div>
 </div>
 
 
-
-          <table class="table table-striped table-bordered" style="background-color: white;">
-    <thead>
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">Name</th>
-            <th scope="col">Email</th>
-            <th scope="col">Role</th>
-            <th scope="col">Created At</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <th scope="row">1</th>
-            <td>{{ $LoggedAdminInfo->name }}</td>
-            <td>{{ $LoggedAdminInfo->email }}</td>
-            <td>{{ $LoggedAdminInfo->role }}</td>
-            <td>{{ $LoggedAdminInfo->created_at }}</td>
-        </tr>
-    </tbody>
-</table>
-      </div>
-
+            </div>
+        </div>
+    </div>
 </div>
 
 

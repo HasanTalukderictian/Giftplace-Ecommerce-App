@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\BrandController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 
@@ -37,4 +39,18 @@ Route::get('/', function () {
     // Product Route
 
     Route::get('/products', [ProductController::class, 'show'])->name('product.show');
+
+// Brands
+
+Route::get('/brands', [ProductController::class, 'brands'])->name('product.brands');
+Route::post('/add-brands', [BrandController::class, 'store'])->name('brands.store');
+Route::delete('/brands/{id}', [BrandController::class, 'destroy'])->name('brands.destroy');
+
+
+//Categories
+
+Route::get('/categories', [ProductController::class, 'categories'])->name('product.categories');
+Route::post('/add-categories', [CategoryController::class, 'store'])->name('category.store');
+Route::delete('/del-categories/{id}', [CategoryController::class, 'destroy'])->name('category.destroy');
+
 
