@@ -324,21 +324,21 @@
                     <li class="nav-item">
     <a class="nav-link" data-toggle="collapse" href="#products" aria-expanded="false" aria-controls="products">
         <i class="icon-bar-graph menu-icon"></i>
-        <span class="menu-title">Products</span>
+        <span href="{{ route('product.show') }}" class="menu-title">Products</span>
         <i class="menu-arrow"></i>
     </a>
 
     <div class="collapse" id="products">
         <ul class="nav flex-column sub-menu">
             <li class="nav-item">
-                <a class="nav-link" href="#">Brands</a>
+                <a class="nav-link" href="{{ route('product.brands') }}">Brands</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link " href="#">Categories</a>
+                <a class="nav-link " href="{{  route('product.categories') }}">Categories</a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="#">Add Products</a>
+                <a class="nav-link" href="{{ route('products.show') }}">Add Products</a>
             </li>
         </ul>
     </div>

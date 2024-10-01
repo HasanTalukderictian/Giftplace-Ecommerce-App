@@ -13,6 +13,16 @@
     <link rel="stylesheet" href="/vendors/feather/feather.css">
     <link rel="stylesheet" href="/vendors/ti-icons/css/themify-icons.css">
     <link rel="stylesheet" href="/vendors/css/vendor.bundle.base.css">
+
+    <!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Popper.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+
+<!-- Bootstrap 4 JavaScript -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
     <!-- endinject -->
     <!-- Plugin css for this page -->
     <link rel="stylesheet" href="/vendors/datatables.net-bs4/dataTables.bootstrap4.css">
@@ -314,7 +324,7 @@
                     <li class="nav-item">
     <a class="nav-link" data-toggle="collapse" href="#products" aria-expanded="false" aria-controls="products">
         <i class="icon-bar-graph menu-icon"></i>
-        <span class="menu-title">Products</span>
+        <span href="{{ route('product.show') }}" class="menu-title">Products</span>
         <i class="menu-arrow"></i>
     </a>
 
@@ -330,17 +340,17 @@
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('products.show') }}">Add Products</a>
             </li>
-
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('products.show') }}">Product Reviews</a>
-            </li>
         </ul>
     </div>
 </li>
 
-                  
-
-
+                <li class="nav-item">
+    <a class="nav-link" aria-expanded="false" href="{{ route('clients.show') }}" aria-controls="tables">
+        <i class="fas fa-users menu-icon"></i>
+        <span class="menu-title">Client</span>
+        <i class="fas fa-chevron-right menu-arrow"></i> <!-- Arrow added here -->
+    </a>
+</li>
 
 
                     <li class="nav-item">
@@ -417,49 +427,172 @@
                         <div class="row">
 
 
-  <!-- Admin Information -->
-<div class="container border-2 mt-4 p-3">
+    <!-- Admin Information -->
+      <div class="container border-2">
 
-    <!-- Header Section with Title and Add Button -->
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="me-3">Products</h2>
-        <a href="{{ route('products.view') }}" class="btn btn-primary">+ Add Product</a>
-    </div>
+        <div class="d-flex justify-content-between align-items-center">
+   <div class="main-panel">
+    <div class="content-wrapper">
+        <div class="content-wrapper">
+            <div class="row">
 
-    <!-- Products Table -->
-    <table class="table table-striped table-bordered" style="background-color: white;">
-        <thead>
+                <!-- Admin Information -->
+                <div class="container">
+
+                    <!-- Button and Header -->
+                    <div class="d-flex justify-content-between align-items-center">
+                    <h2 class="me-3">Clients</h2>
+                     <button class="btn btn-primary" data-toggle="modal" data-target="#addBrandModal">+ Add Brands</button>
+                     </div>
+
+                    <!-- Brands Table -->
+                    <table class="table table-striped table-bordered" style="background-color: white;">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Image</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+        @foreach($clientsinfo as $client)
             <tr>
-                <th scope="col">#</th>
-                <th scope="col">Name</th>
-                <th scope="col">Price</th>
-                <th scope="col">Stock</th>
-                <th scope="col">Image</th>
-                <th scope="col">Actions</th>
+                <td>{{ $client->id }}</td>
+                <td>{{ $client->name }}</td>
+                <td><img src="{{ asset('storage/' . $client->image) }}" alt="{{ $client->name }}" width="100"></td>
+                 <td>
+                <!-- Delete Button Form -->
+                <form  action="{{ route('clients.destroy', $client->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this brand?');">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </td>
             </tr>
-        </thead>
-        <tbody>
-            @foreach($productInfo as $product)
-                <tr>
-                    <td>{{ $product->id }}</td>
-                    <td>{{ $product->name }}</td>
-                    <td>{{ $product->base_price }}</td>
-                    <td>{{ $product->stock }}</td>
-                    <td><img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" width="100"></td>
-                    <td>
-                        <!-- Delete Button Form -->
-                        <form action="{{ route('products.destroy',  $product->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this product?');" style="display:inline-block;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger">Delete</button>
-                        </form>
-                    </td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
+        @endforeach
+    </tbody>
+                    </table>
+                </div>
+
+                <!-- Modal for adding brands -->
+               <!-- Modal -->
+{{-- <div class="modal fade" id="addBrandModal" tabindex="-1" role="dialog" aria-labelledby="addBrandModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addBrandModalLabel">Add Brand</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Display Success Message -->
+                @if(session('success'))
+                    <div class="alert alert-success">
+                        {{ session('success') }}
+                    </div>
+                @endif
+
+                <!-- Form -->
+                <form action="{{ route('clients.store') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="form-group">
+                        <label for="brandName">Client Name</label>
+                        <input type="text" class="form-control" id="brandName" name="name" placeholder="Enter brand name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="brandImage">Client Image</label>
+                        <input type="file" class="form-control-file" id="brandImage" name="image" required>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
+    </div>
+  </div>
+</div>
+
+
+            </div>
+        </div>
+    </div>
+</div> --}}
+
+  <div class="modal fade" id="addBrandModal" tabindex="-1" role="dialog" aria-labelledby="addBrandModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addBrandModalLabel">Add Client</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Display Success Message -->
+                @if(session('success'))
+                    <div class="alert alert-success">
+                        {{ session('success') }}
+                    </div>
+                @endif
+
+                <!-- Form -->
+                <form action="{{ route('clients.store') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="form-group">
+                        <label for="clientName">Client Name</label>
+                        <input type="text" class="form-control" id="clientName" name="name" placeholder="Enter client name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="clientImage">Client Image</label>
+                        <input type="file" class="form-control-file" id="clientImage" name="image" required onchange="previewImage(event)">
+                    </div>
+
+                    <!-- Image Preview -->
+                    <div class="form-group">
+                        <img id="imagePreview" src="#" alt="Image Preview" style="display:none; width: 80px; max-height: 80px; object-fit: cover;" />
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// JavaScript function to preview image
+function previewImage(event) {
+    const imagePreview = document.getElementById('imagePreview');
+    const file = event.target.files[0];
+
+    if (file) {
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+            imagePreview.src = e.target.result;
+            imagePreview.style.display = 'block'; // Show the image
+        };
+
+        reader.readAsDataURL(file); // Convert image file to base64 string
+    } else {
+        imagePreview.style.display = 'none'; // Hide the image if no file is selected
+    }
+}
+</script>
+
+
+
+                    </div>
 
 
                 </div>

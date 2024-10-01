@@ -13,6 +13,16 @@
     <link rel="stylesheet" href="/vendors/feather/feather.css">
     <link rel="stylesheet" href="/vendors/ti-icons/css/themify-icons.css">
     <link rel="stylesheet" href="/vendors/css/vendor.bundle.base.css">
+
+    <!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Popper.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+
+<!-- Bootstrap 4 JavaScript -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
     <!-- endinject -->
     <!-- Plugin css for this page -->
     <link rel="stylesheet" href="/vendors/datatables.net-bs4/dataTables.bootstrap4.css">
@@ -314,7 +324,7 @@
                     <li class="nav-item">
     <a class="nav-link" data-toggle="collapse" href="#products" aria-expanded="false" aria-controls="products">
         <i class="icon-bar-graph menu-icon"></i>
-        <span class="menu-title">Products</span>
+        <span href="{{ route('product.show') }}" class="menu-title">Products</span>
         <i class="menu-arrow"></i>
     </a>
 
@@ -330,17 +340,17 @@
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('products.show') }}">Add Products</a>
             </li>
-
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('products.show') }}">Product Reviews</a>
-            </li>
         </ul>
     </div>
 </li>
 
-                  
-
-
+                <li class="nav-item">
+    <a class="nav-link" aria-expanded="false" href="{{ route('clients.show') }}" aria-controls="tables">
+        <i class="fas fa-users menu-icon"></i>
+        <span class="menu-title">Client</span>
+        <i class="fas fa-chevron-right menu-arrow"></i> <!-- Arrow added here -->
+    </a>
+</li>
 
 
                     <li class="nav-item">
@@ -417,52 +427,121 @@
                         <div class="row">
 
 
-  <!-- Admin Information -->
-<div class="container border-2 mt-4 p-3">
+<!-- Admin Information -->
+<div class="container border-2">
 
-    <!-- Header Section with Title and Add Button -->
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="me-3">Products</h2>
-        <a href="{{ route('products.view') }}" class="btn btn-primary">+ Add Product</a>
-    </div>
+    <!-- Form -->
+    <form action="{{ route('banner.store') }}" method="POST" id="myForm" enctype="multipart/form-data">
+        @csrf <!-- Include CSRF token for form submission in Laravel -->
 
-    <!-- Products Table -->
-    <table class="table table-striped table-bordered" style="background-color: white;">
-        <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">Name</th>
-                <th scope="col">Price</th>
-                <th scope="col">Stock</th>
-                <th scope="col">Image</th>
-                <th scope="col">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($productInfo as $product)
-                <tr>
-                    <td>{{ $product->id }}</td>
-                    <td>{{ $product->name }}</td>
-                    <td>{{ $product->base_price }}</td>
-                    <td>{{ $product->stock }}</td>
-                    <td><img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" width="100"></td>
-                    <td>
-                        <!-- Delete Button Form -->
-                        <form action="{{ route('products.destroy',  $product->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this product?');" style="display:inline-block;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger">Delete</button>
-                        </form>
-                    </td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
+        <div class="form-group mb-3">
+            <label for="title">Title</label>
+            <input type="text" class="form-control" id="title" name="title" placeholder="Enter title" required>
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="images">Upload Images</label>
+            <input type="file" class="form-control-file" id="images" name="image" multiple required onchange="previewImages(event)">
+        </div>
+
+        <!-- Image Previews -->
+        <div class="image-preview-container" id="imagePreviewContainer"></div>
+
+        <button type="submit" class="btn btn-primary mt-3">Submit</button>
+    </form>
 </div>
 
+<script>
+let quill;
+
+function previewImages(event) {
+    const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+    imagePreviewContainer.innerHTML = ''; // Clear previous previews
+
+    const files = event.target.files;
+
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+            const imgWrapper = document.createElement('div');
+            imgWrapper.style.position = 'relative';
+            imgWrapper.style.display = 'inline-block';
+            imgWrapper.style.marginRight = '10px'; // Space between images
+
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.style.width = '80px'; // Set width for preview images
+            img.style.objectFit = 'cover'; // Maintain aspect ratio
+
+            const closeIcon = document.createElement('span');
+            closeIcon.innerHTML = '&times;'; // X icon
+            closeIcon.style.position = 'absolute';
+            closeIcon.style.top = '0';
+            closeIcon.style.right = '0';
+            closeIcon.style.cursor = 'pointer';
+            closeIcon.style.color = 'red';
+            closeIcon.style.fontSize = '20px';
+            closeIcon.onclick = function() {
+                imgWrapper.remove(); // Remove the image wrapper on click
+            };
+
+            imgWrapper.appendChild(img);
+            imgWrapper.appendChild(closeIcon);
+            imagePreviewContainer.appendChild(imgWrapper);
+        };
+
+        reader.readAsDataURL(file); // Convert image file to base64 string
+    }
+}
+
+document.getElementById('myForm').onsubmit = function(event) {
+    // Get the Quill editor content and set it to the hidden input
+    const descriptionInput = document.getElementById('descriptionInput');
+    descriptionInput.value = quill.root.innerHTML;
+
+    // Allow form to submit
+    return true;
+};
+
+// Initialize rich text editor
+document.addEventListener("DOMContentLoaded", function() {
+    const quillContainer = document.querySelector('.quill-editor');
+    quill = new Quill(quillContainer, {
+        theme: 'snow',
+        modules: {
+            toolbar: [
+                ['bold', 'italic', 'underline'],
+                ['link', 'image'],
+                [{ list: 'ordered' }, { list: 'bullet' }],
+                ['clean'] // remove formatting button
+            ]
+        }
+    });
+});
+</script>
+
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+
+<style>
+.image-preview-container {
+    display: flex; /* Align images in a row */
+    flex-wrap: wrap; /* Allow wrapping to the next line */
+}
+.image-preview-container img {
+    max-height: 80px; /* Optional: Limit height of preview images */
+}
+.quill-editor {
+    height: 150px; /* Set height for Quill editor */
+    border: 1px solid #ccc; /* Optional: Add a border */
+}
+</style>
 
 
-                </div>
+
+
                 <!-- content-wrapper ends -->
                 <!-- partial:partials/_footer.html -->
                 <footer class="footer">

@@ -13,6 +13,16 @@
     <link rel="stylesheet" href="/vendors/feather/feather.css">
     <link rel="stylesheet" href="/vendors/ti-icons/css/themify-icons.css">
     <link rel="stylesheet" href="/vendors/css/vendor.bundle.base.css">
+
+    <!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Popper.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+
+<!-- Bootstrap 4 JavaScript -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
     <!-- endinject -->
     <!-- Plugin css for this page -->
     <link rel="stylesheet" href="/vendors/datatables.net-bs4/dataTables.bootstrap4.css">
@@ -314,7 +324,7 @@
                     <li class="nav-item">
     <a class="nav-link" data-toggle="collapse" href="#products" aria-expanded="false" aria-controls="products">
         <i class="icon-bar-graph menu-icon"></i>
-        <span class="menu-title">Products</span>
+        <span href="{{ route('product.show') }}" class="menu-title">Products</span>
         <i class="menu-arrow"></i>
     </a>
 
@@ -330,17 +340,25 @@
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('products.show') }}">Add Products</a>
             </li>
-
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('products.show') }}">Product Reviews</a>
-            </li>
         </ul>
     </div>
 </li>
 
-                  
+                <li class="nav-item">
+    <a class="nav-link" aria-expanded="false"  aria-controls="tables">
+        <i class="fas fa-users menu-icon"></i>
+        <span class="menu-title">blogs</span>
+        <i class="fas fa-chevron-right menu-arrow"></i> <!-- Arrow added here -->
+    </a>
+</li>
 
-
+ <li class="nav-item">
+    <a class="nav-link" href="{{ route('blogs.show') }}" aria-expanded="false" aria-controls="tables">
+        <i class="fas fa-pen menu-icon"></i> <!-- Changed to pen icon -->
+        <span class="menu-title">Blogs</span>
+        <i class="fas fa-chevron-right menu-arrow"></i> <!-- Arrow remains the same -->
+    </a>
+</li>
 
 
                     <li class="nav-item">
@@ -417,49 +435,72 @@
                         <div class="row">
 
 
-  <!-- Admin Information -->
-<div class="container border-2 mt-4 p-3">
+    <!-- Admin Information -->
+      <div class="container border-2">
 
-    <!-- Header Section with Title and Add Button -->
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="me-3">Products</h2>
-        <a href="{{ route('products.view') }}" class="btn btn-primary">+ Add Product</a>
+        <div class="d-flex justify-content-between align-items-center">
+   <div class="main-panel">
+    <div class="content-wrapper">
+        <div class="content-wrapper">
+            <div class="row">
+
+               <!-- Admin Information -->
+<div class="container">
+
+    <!-- Button and Header -->
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <h2 class="me-3">Blogs</h2>
+        <a href="{{ route('blogs.index') }}" class="btn btn-primary">+ Blogs</a>
     </div>
 
-    <!-- Products Table -->
+    <!-- blogss Table -->
     <table class="table table-striped table-bordered" style="background-color: white;">
         <thead>
             <tr>
                 <th scope="col">#</th>
                 <th scope="col">Name</th>
-                <th scope="col">Price</th>
-                <th scope="col">Stock</th>
                 <th scope="col">Image</th>
-                <th scope="col">Actions</th>
+                <th>Action</th>
             </tr>
         </thead>
-        <tbody>
-            @foreach($productInfo as $product)
-                <tr>
-                    <td>{{ $product->id }}</td>
-                    <td>{{ $product->name }}</td>
-                    <td>{{ $product->base_price }}</td>
-                    <td>{{ $product->stock }}</td>
-                    <td><img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" width="100"></td>
-                    <td>
-                        <!-- Delete Button Form -->
-                        <form action="{{ route('products.destroy',  $product->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this product?');" style="display:inline-block;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger">Delete</button>
-                        </form>
-                    </td>
-                </tr>
-            @endforeach
-        </tbody>
+       <tbody>
+    @foreach($blogsinfo as $blogs)
+        <tr>
+            <td>{{ $blogs->id }}</td>
+            <td>{{ $blogs->name }}</td>
+            <td>
+                @php
+                    // Decode the JSON string into an array
+                    $images = json_decode($blogs->images);
+                @endphp
+
+                {{-- Loop through each image and display it --}}
+                @if($images)
+                    @foreach($images as $image)
+                        <img src="{{ asset('storage/' . $image) }}" alt="{{ $blogs->name }}" width="100" style="margin-right: 10px;">
+                    @endforeach
+                @else
+                    <p>No images available</p>
+                @endif
+            </td>
+            <td>
+                <!-- Delete Button Form -->
+                <form method="POST" action="{{ route('blogs.destroy', $blogs->id) }}" onsubmit="return confirm('Are you sure you want to delete this blog?');">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </td>
+        </tr>
+    @endforeach
+</tbody>
+
+
+{{-- Debugging: Uncomment this line to see the blogsinfo content --}}
+
+
     </table>
 </div>
-
 
 
                 </div>

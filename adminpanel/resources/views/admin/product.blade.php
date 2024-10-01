@@ -13,6 +13,17 @@
     <link rel="stylesheet" href="/vendors/feather/feather.css">
     <link rel="stylesheet" href="/vendors/ti-icons/css/themify-icons.css">
     <link rel="stylesheet" href="/vendors/css/vendor.bundle.base.css">
+
+    <!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Popper.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+
+
+<!-- Bootstrap 4 JavaScript -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
     <!-- endinject -->
     <!-- Plugin css for this page -->
     <link rel="stylesheet" href="/vendors/datatables.net-bs4/dataTables.bootstrap4.css">
@@ -314,13 +325,13 @@
                     <li class="nav-item">
     <a class="nav-link" data-toggle="collapse" href="#products" aria-expanded="false" aria-controls="products">
         <i class="icon-bar-graph menu-icon"></i>
-        <span class="menu-title">Products</span>
+        <span href="{{ route('product.show') }}" class="menu-title">Products</span>
         <i class="menu-arrow"></i>
     </a>
 
     <div class="collapse" id="products">
         <ul class="nav flex-column sub-menu">
-            <li class="nav-item">
+           <li class="nav-item">
                 <a class="nav-link" href="{{ route('product.brands') }}">Brands</a>
             </li>
             <li class="nav-item">
@@ -337,10 +348,6 @@
         </ul>
     </div>
 </li>
-
-                  
-
-
 
 
                     <li class="nav-item">
@@ -417,48 +424,130 @@
                         <div class="row">
 
 
-  <!-- Admin Information -->
-<div class="container border-2 mt-4 p-3">
-
-    <!-- Header Section with Title and Add Button -->
+    <!-- Admin Information -->
+    <!-- Admin Information -->
+<div class="container border-2 p-2">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="me-3">Products</h2>
-        <a href="{{ route('products.view') }}" class="btn btn-primary">+ Add Product</a>
+        <!-- Products Added Title -->
+        <h2>Products Added</h2>
+
+        <!-- Back Button -->
+        <a href="{{ route('products.show') }}" class="btn btn-secondary">Back</a>
     </div>
 
-    <!-- Products Table -->
-    <table class="table table-striped table-bordered" style="background-color: white;">
-        <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">Name</th>
-                <th scope="col">Price</th>
-                <th scope="col">Stock</th>
-                <th scope="col">Image</th>
-                <th scope="col">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($productInfo as $product)
-                <tr>
-                    <td>{{ $product->id }}</td>
-                    <td>{{ $product->name }}</td>
-                    <td>{{ $product->base_price }}</td>
-                    <td>{{ $product->stock }}</td>
-                    <td><img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" width="100"></td>
-                    <td>
-                        <!-- Delete Button Form -->
-                        <form action="{{ route('products.destroy',  $product->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this product?');" style="display:inline-block;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger">Delete</button>
-                        </form>
-                    </td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
+    <!-- Form to Add Product -->
+    <form action=" {{ route('products.store') }}" method="POST" enctype="multipart/form-data">
+        @csrf <!-- Include CSRF token -->
+
+        <!-- Product Name -->
+        <div class="mb-3">
+            <label for="productName" class="form-label">Product Name</label>
+            <input type="text" class="form-control" name="name" id="productName" placeholder="Enter product name">
+        </div>
+
+        <!-- Product Model -->
+        <div class="mb-3">
+            <label for="productModel" class="form-label">Product Model</label>
+            <input type="text" class="form-control" name="model" id="productModel" placeholder="Enter product model">
+        </div>
+
+        <!-- Base Price -->
+        <div class="mb-3">
+            <label for="basePrice" class="form-label">Base Price</label>
+            <input type="number" class="form-control" name="base_price" id="basePrice" placeholder="Enter base price">
+        </div>
+
+        <!-- Stock -->
+        <div class="mb-3">
+            <label for="Stock" class="form-label">Stock</label>
+            <input type="number" class="form-control" name="stock" id="Stock" placeholder="Enter stock quantity">
+        </div>
+
+        <!-- Brand Dropdown -->
+        <div class="mb-3">
+            <label for="brand" class="form-label">Brand</label>
+            <select class="form-control" id="brand" name="brand_id">
+                <option value="" disabled selected>Select a brand</option>
+                @foreach($brandsinfo as $brand)
+                    <option value="{{ $brand->id }}">{{ $brand->name }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <!-- Category Dropdown -->
+        <div class="mb-3">
+            <label for="category" class="form-label">Category</label>
+            <select class="form-control" id="category" name="category_id">
+                <option value="" disabled selected>Select a category</option>
+                @foreach($categoryinfo as $category)
+                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <!-- Product Description (with CKEditor) -->
+        <div class="mb-3">
+            <label for="productDescription" class="form-label">Product Description</label>
+            <textarea class="form-control" id="productDescription" name="description" rows="4" placeholder="Enter product description"></textarea>
+        </div>
+
+        <!-- Summary Extra Description (with CKEditor) -->
+        <div class="mb-3">
+            <label for="summaryExtraDescription" class="form-label">Summary Extra Description</label>
+            <textarea class="form-control" id="summaryExtraDescription" name="summary_extra_description" rows="3" placeholder="Enter summary extra description"></textarea>
+        </div>
+
+        <!-- Extra Summary (with CKEditor) -->
+        <div class="mb-3">
+            <label for="extraSummary" class="form-label">Extra Summary</label>
+            <textarea class="form-control" id="extraSummary" name="extra_summary" rows="3" placeholder="Enter extra summary"></textarea>
+        </div>
+
+        <!-- Image Upload -->
+        <div class="mb-3">
+            <label for="productImage" class="form-label">Upload Product Image</label>
+            <input type="file" class="form-control" id="productImage" name="image" accept="image/*">
+        </div>
+
+        <!-- Video Link Upload -->
+        <div class="mb-3">
+            <label for="videoLink" class="form-label">Video Link (YouTube or Vimeo)</label>
+            <input type="url" class="form-control" name="video_link" id="videoLink" placeholder="Enter video URL">
+        </div>
+
+        <!-- Show in Frontend (Styled Radio Buttons) -->
+        <div class="mb-3">
+            <label class="form-label">Show in Frontend</label><br>
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                <label class="btn btn-outline-primary">
+                    <input type="radio" name="show_in_frontend" id="showYes" value="yes"> Yes
+                </label>
+                <label class="btn btn-outline-danger">
+                    <input type="radio" name="show_in_frontend" id="showNo" value="no"> No
+                </label>
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
 </div>
+
+
+
+<!-- CKEditor CDN -->
+<script src="https://cdn.ckeditor.com/4.16.0/standard/ckeditor.js"></script>
+
+<!-- Initialize CKEditor for textareas -->
+<script>
+    CKEDITOR.replace('productDescription');
+    CKEDITOR.replace('summaryExtraDescription');
+    CKEDITOR.replace('extraSummary');
+</script>
+
+
+
+
 
 
 
