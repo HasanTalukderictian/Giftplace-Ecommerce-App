@@ -70,7 +70,7 @@
     @endphp
 
     @foreach ($banners as $banner)
-        <div class="banner p-5" style="background-image: url('{{ asset('storage/' . $banner->image) }}');">
+        <div class="banner p-5"  style="background-image: url('{{ asset('storage/' . $banner->image) }}');">
             <div class="banner-overlay"></div>
             <div class="banner-content">
                 <h1>{{ $banner->title }}</h1>
