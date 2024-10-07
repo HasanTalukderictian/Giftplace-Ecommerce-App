@@ -30,6 +30,20 @@
             height: 100%; /* Make the iframe fill the container */
             border: none; /* Remove default iframe border */
         }
+
+        .number-box {
+    padding: 20px; /* Adjust this value as needed */
+}
+
+.container-fluid {
+    margin: 0; /* Ensure no margin on the container */
+}
+
+.row {
+    margin-left: 0;
+    margin-right: 0;
+}
+
     </style>
 </head>
 <body>
@@ -57,13 +71,23 @@
                     <div class="col-12">
                         <!-- YouTube Video Embed -->
                         <div class="video-container">
-                            <iframe class="embed-responsive-item rounded"
-                                    src="https://www.youtube.com/embed/5VnSscv0mWw?rel=0&autoplay=1"
-                                    allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                       <iframe class="embed-responsive-item rounded"
+                       src="https://www.youtube.com/embed/giwDbmc1vJo"
+                       allow="autoplay; encrypted-media"
+                        allowfullscreen>
+                       </iframe>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <div class="container-fluid mb-4">
+            @include('frontend.Midbanner')
+</div>
+
+
+
+        </div>
         </section>
     </div>
 

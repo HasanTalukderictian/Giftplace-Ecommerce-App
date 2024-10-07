@@ -98,6 +98,14 @@
                                         </a></li>
                             </ul>
                         </div>
+
+                         <div class="collapse" id="pages">
+                            <ul class="nav flex-column sub-menu">
+                                <li class="nav-item"> <a class="nav-link" href="{{ route('midbanner.show') }}">
+                                         MidBanner
+                                        </a></li>
+                            </ul>
+                        </div>
                     </li>
 
 

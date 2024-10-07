@@ -8,6 +8,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\fronted\NavbarController as FrontedNavbarController;
 use App\Http\Controllers\frontend\NavbarController;
+use App\Http\Controllers\MidBannerController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductsController;
 use Illuminate\Support\Facades\Route;
@@ -73,6 +74,13 @@ Route::prefix('admin')->group(function () {
     Route::get('/blogs/view', [BlogController::class, 'index'])->name('blogs.index');
     Route::post('/blogs', [BlogController::class, 'store'])->name('blogs.store');
     Route::delete('/blogs/{id}', [BlogController::class, 'destroy'])->name('blogs.destroy');
+
+
+    // MidBanner
+    // Brands
+    Route::get('/midbanner', [MidBannerController::class, 'show'])->name('midbanner.show');
+    Route::get('/show-banner', [MidBannerController::class, 'index'])->name('midbanner.index');
+    Route::post('/create-banner', [MidBannerController::class, 'store'])->name('midbanner.store');
 
 
     //Page display
