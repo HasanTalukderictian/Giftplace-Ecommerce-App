@@ -83,9 +83,16 @@
 
             <div class="container-fluid mb-4">
             @include('frontend.Midbanner')
-</div>
+            </div>
 
 
+            <div class="container-fluid mt-4">
+                @include('frontend.project')
+            </div>
+
+            <div class="container-fluid mt-4">
+                @include('frontend.client')
+            </div>
 
         </div>
         </section>
